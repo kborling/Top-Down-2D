@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     public GameObject sword;
     public float thrustPower;
     public bool canMove;
+    public bool canAttack;
 
     Animator anim;
     int currentHealth;
@@ -19,6 +20,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         canMove = true;
+        canAttack = true;
         anim = GetComponent<Animator>();
         currentHealth = maxHealth;
         GetHealth();
@@ -62,10 +64,21 @@ public class Player : MonoBehaviour
 
     void Attack()
     {
+        if (!canAttack)
+            return;
         canMove = false;
+        canAttack = false;
         GameObject newSword = Instantiate(sword, transform.position, sword.transform.rotation);
+        if (currentHealth == maxHealth)
+        {
+            newSword.GetComponent<Sword>().special = true;
+            canMove = true;
+            thrustPower = 500;
+        }
         #region SwordRotation
         int swordDir = anim.GetInteger("dir");
+        anim.SetInteger("attackDir", swordDir);
+
         if (swordDir == 0)
         {
             newSword.transform.Rotate(0, 0, 0);

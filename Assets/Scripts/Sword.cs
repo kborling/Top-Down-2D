@@ -5,7 +5,11 @@ using UnityEngine;
 public class Sword : MonoBehaviour
 {
 
+    public bool special;
+    public GameObject swordParticle;
+
     float timer = .15f;
+    float specialTimer = 1;
 
     // Use this for initialization
     void Start()
@@ -18,8 +22,21 @@ public class Sword : MonoBehaviour
     {
         timer -= Time.deltaTime;
         if (timer <= 0)
+            GameObject.FindGameObjectWithTag("Player").GetComponent<Animator>().SetInteger("attackDir", 5);
+        if (!special)
         {
-            GameObject.FindGameObjectWithTag("Player").GetComponent<Player>().canMove = true;
+            if (timer <= 0)
+            {
+                GameObject.FindGameObjectWithTag("Player").GetComponent<Player>().canMove = true;
+                GameObject.FindGameObjectWithTag("Player").GetComponent<Player>().canAttack = true;
+                Destroy(gameObject);
+            }
+        }
+        specialTimer -= Time.deltaTime;
+        if (specialTimer <= 0)
+        {
+            GameObject.FindGameObjectWithTag("Player").GetComponent<Player>().canAttack = true;
+            Instantiate(swordParticle, transform.position, transform.rotation);
             Destroy(gameObject);
         }
     }
